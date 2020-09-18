@@ -5,7 +5,9 @@ import IRobotRepository from '../../../repositories/IRobotRepository';
 
 class RobotRepository implements IRobotRepository {
   async accessSite(infoUser: IInfoUser): Promise<void> {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({
+      headless: process.env.NODE_ENV !== 'development',
+    });
 
     const companyCode = process.env.COMPANY_CODE as string;
 
