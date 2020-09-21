@@ -16,6 +16,7 @@ import './config/container';
 
     startBot.execute();
   } catch (error) {
+    console.log(error);
     throw error;
   }
 })();
