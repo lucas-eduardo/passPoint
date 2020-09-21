@@ -46,6 +46,7 @@ class BotRepository implements IBotRepository {
           await this.registerUser(text, msg, client, dictionaryRegister);
         }
       } catch (error) {
+        console.log(error);
         msg.reply('Ocorreu algum erro, tente novamente!');
       }
     });
