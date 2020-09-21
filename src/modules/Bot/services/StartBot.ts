@@ -1,6 +1,8 @@
-import BotRepository from '../infra/discord/repositories/BotRepository';
+import { injectable, inject } from 'tsyringe';
+
 import IBotRepository from '../repositories/IBotRepository';
 
+@injectable()
 class StartBot {
   private dictionaryPassPoint = [
     'passar ponto',
@@ -22,9 +24,12 @@ class StartBot {
     'add user',
   ];
 
-  constructor(private botRepository: IBotRepository) {}
+  constructor(
+    @inject('BotRepository')
+    private botRepository: IBotRepository,
+  ) {}
 
-  execute() {
+  execute(): void {
     this.botRepository.startBot(
       this.dictionaryPassPoint,
       this.dictionaryRegister,
@@ -32,4 +37,4 @@ class StartBot {
   }
 }
 
-export default new StartBot(new BotRepository());
+export default StartBot;

@@ -1,12 +1,13 @@
 import Discord, { Message, Client } from 'discord.js';
+import { container } from 'tsyringe';
 
 import IBotRepository from '../../../repositories/IBotRepository';
 
-import findByUserIdDiscordService from '../../../../User/services/FindByUserIdDiscord';
-import existingUserService from '../../../../User/services/ExistingUser';
-import createUserService from '../../../../User/services/CreateUser';
-import updateUserService from '../../../../User/services/UpdateUser';
-import accessSite from '../../../../Robot/services/AccessSite';
+import FindByUserIdDiscordService from '../../../../User/services/FindByUserIdDiscord';
+import ExistingUserService from '../../../../User/services/ExistingUser';
+import CreateUserService from '../../../../User/services/CreateUser';
+import UpdateUserService from '../../../../User/services/UpdateUser';
+import AccessSiteService from '../../../../Robot/services/AccessSite';
 
 import questions from '../../../../../constants/questions';
 import { removeSpecialCharacters } from '../../../../../utils/format';
@@ -59,10 +60,16 @@ class BotRepository implements IBotRepository {
       const idUserDiscord = msg.author.id;
 
       if (dictionary.includes(text)) {
-        const user = await findByUserIdDiscordService.execute(idUserDiscord);
+        const findByUserIdDiscord = container.resolve(
+          FindByUserIdDiscordService,
+        );
+
+        const user = await findByUserIdDiscord.execute(idUserDiscord);
 
         if (user) {
           msg.reply('Aguarde...');
+
+          const accessSite = container.resolve(AccessSiteService);
 
           await accessSite.execute(user);
 
@@ -86,13 +93,17 @@ class BotRepository implements IBotRepository {
       const idUserDiscord = msg.author.id;
 
       if (dictionary.includes(text)) {
-        const existing = await existingUserService.execute(idUserDiscord);
+        const existingUser = container.resolve(ExistingUserService);
+
+        const existing = await existingUser.execute(idUserDiscord);
 
         if (existing) {
           msg.reply(questions.existingUser);
         } else {
           msg.reply(questions.reAuthenticate);
-          await createUserService.execute(idUserDiscord);
+          const createUser = container.resolve(CreateUserService);
+
+          await createUser.execute(idUserDiscord);
         }
 
         return;
@@ -115,28 +126,36 @@ class BotRepository implements IBotRepository {
               }
             },
             [questions.reAuthenticate]: async () => {
-              await updateUserService.execute(idUserDiscord, {
+              const updateUser = container.resolve(UpdateUserService);
+
+              await updateUser.execute(idUserDiscord, {
                 readyToLogIn: false,
                 reAuthenticate: text,
               });
               msg.reply(questions.passAuthenticate);
             },
             [questions.passAuthenticate]: async () => {
-              await updateUserService.execute(idUserDiscord, {
+              const updateUser = container.resolve(UpdateUserService);
+
+              await updateUser.execute(idUserDiscord, {
                 readyToLogIn: false,
                 passAuthenticate: text,
               });
               msg.reply(questions.user);
             },
             [questions.user]: async () => {
-              await updateUserService.execute(idUserDiscord, {
+              const updateUser = container.resolve(UpdateUserService);
+
+              await updateUser.execute(idUserDiscord, {
                 readyToLogIn: false,
                 user: text,
               });
               msg.reply(questions.password);
             },
             [questions.password]: async () => {
-              await updateUserService.execute(idUserDiscord, {
+              const updateUser = container.resolve(UpdateUserService);
+
+              await updateUser.execute(idUserDiscord, {
                 readyToLogIn: true,
                 password: text,
               });

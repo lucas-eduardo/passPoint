@@ -1,13 +1,18 @@
+import { injectable, inject } from 'tsyringe';
+
 import IInfoUser from '../dtos/IInfoUser';
-import RobotRepository from '../infra/puppeteer/CompanyQintess/RobotRepository';
 import IRobotRepository from '../repositories/IRobotRepository';
 
+@injectable()
 class AccessSite {
-  constructor(private robotRepository: IRobotRepository) {}
+  constructor(
+    @inject('RobotRepository')
+    private robotRepository: IRobotRepository,
+  ) {}
 
   async execute(infoUser: IInfoUser): Promise<void> {
     await this.robotRepository.accessSite(infoUser);
   }
 }
 
-export default new AccessSite(new RobotRepository());
+export default AccessSite;

@@ -1,15 +1,20 @@
-import { config } from 'dotenv';
+import 'reflect-metadata';
+import 'dotenv/config';
+import { container } from 'tsyringe';
 
 import database from './config/database/mongoose';
 
-import startBotService from './modules/Bot/services/StartBot';
+import StartBotService from './modules/Bot/services/StartBot';
 
-config();
+import './config/container';
 
 (async () => {
   try {
     await database();
-    startBotService.execute();
+
+    const startBot = container.resolve(StartBotService);
+
+    startBot.execute();
   } catch (error) {
     throw error;
   }

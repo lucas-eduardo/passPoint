@@ -1,11 +1,16 @@
-import UserRepository from '../infra/mongoose/repositories/UserRepository';
+import { injectable, inject } from 'tsyringe';
+
 import IUpdateUser from '../dtos/IUpdateUser';
 import IUserRepository from '../repositories/IUserRepository';
 
 import { encrypt } from '../../../utils/crypto';
 
+@injectable()
 class UpdateUser {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    @inject('UserRepository')
+    private userRepository: IUserRepository,
+  ) {}
 
   async execute(idUserDiscord: string, dataUser: IUpdateUser): Promise<void> {
     if (dataUser.passAuthenticate) {
@@ -20,4 +25,4 @@ class UpdateUser {
   }
 }
 
-export default new UpdateUser(new UserRepository());
+export default UpdateUser;

@@ -1,8 +1,13 @@
-import UserRepository from '../infra/mongoose/repositories/UserRepository';
+import { injectable, inject } from 'tsyringe';
+
 import IUserRepository from '../repositories/IUserRepository';
 
+@injectable()
 class ExistingUser {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    @inject('UserRepository')
+    private userRepository: IUserRepository,
+  ) {}
 
   async execute(idUserDiscord: string): Promise<boolean> {
     const existingUser = await this.userRepository.existingUser(idUserDiscord);
@@ -11,4 +16,4 @@ class ExistingUser {
   }
 }
 
-export default new ExistingUser(new UserRepository());
+export default ExistingUser;
