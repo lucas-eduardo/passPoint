@@ -4,7 +4,6 @@
   "main": "dist/app.js",
   "license": "MIT",
   "scripts": {
-    "prestart": "yarn build",
     "start": "node dist/app.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only --ignore node_modules src/app.ts",
     "build": "tsc"
