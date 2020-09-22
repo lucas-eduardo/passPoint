@@ -7,7 +7,7 @@ class RobotRepository implements IRobotRepository {
   async accessSite(infoUser: IInfoUser): Promise<void> {
     const browser = await puppeteer.launch({
       headless: process.env.NODE_ENV !== 'development',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process'],
+      // args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process'],
     });
 
     const companyCode = process.env.COMPANY_CODE as string;
