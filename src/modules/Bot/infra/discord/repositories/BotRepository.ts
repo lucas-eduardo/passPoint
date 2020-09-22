@@ -1,5 +1,6 @@
 import Discord, { Message, Client } from 'discord.js';
 import { container } from 'tsyringe';
+import { addHours, subMinutes } from 'date-fns';
 
 import IBotRepository from '../../../repositories/IBotRepository';
 
@@ -13,6 +14,8 @@ import questions from '../../../../../constants/questions';
 import { removeSpecialCharacters } from '../../../../../utils/format';
 
 class BotRepository implements IBotRepository {
+  private rememberMinutesBefore = 5;
+
   startBot(dictionaryPassPoint: string[], dictionaryRegister: string[]): void {
     const client = new Discord.Client();
 
@@ -71,6 +74,12 @@ class BotRepository implements IBotRepository {
           msg.reply('Aguarde...');
 
           const accessSite = container.resolve(AccessSiteService);
+
+          const regex = new RegExp(/lembrar/, 'gi');
+
+          if (regex.test(text)) {
+            this.reminderPassPoint(msg);
+          }
 
           await accessSite.execute(user);
 
@@ -175,6 +184,29 @@ class BotRepository implements IBotRepository {
     } catch (error) {
       throw error;
     }
+  }
+
+  private async reminderPassPoint(msg: Message) {
+    const dateCurrent = new Date();
+    const nextPoint = subMinutes(
+      addHours(dateCurrent, 1),
+      this.rememberMinutesBefore,
+    );
+
+    this.hourAnalysis(dateCurrent, nextPoint, msg);
+  }
+
+  private hourAnalysis(dateTime: Date, final: Date, msg: Message) {
+    if (dateTime >= final) {
+      msg.reply(
+        `Lembre-se de passar o ponto daqui ${this.rememberMinutesBefore} minutos!`,
+      );
+      return true;
+    }
+
+    setTimeout(() => {
+      this.hourAnalysis(new Date(), final, msg);
+    }, 2000);
   }
 }
 

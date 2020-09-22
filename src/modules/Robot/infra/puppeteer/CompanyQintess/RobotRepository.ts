@@ -7,7 +7,6 @@ class RobotRepository implements IRobotRepository {
   async accessSite(infoUser: IInfoUser): Promise<void> {
     const browser = await puppeteer.launch({
       headless: process.env.NODE_ENV !== 'development',
-      // args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process'],
     });
 
     const companyCode = process.env.COMPANY_CODE as string;
@@ -44,11 +43,11 @@ class RobotRepository implements IRobotRepository {
 
       await page.waitForSelector('#Button1');
 
-      // if (process.env.NODE_ENV !== 'development') {
-      //   await page.click('#Button1');
+      if (process.env.NODE_ENV !== 'development') {
+        await page.click('#Button1');
 
-      //   await page.waitForXPath('//*[@id="Form1"]/table[2]/tbody/input');
-      // }
+        await page.waitForXPath('//*[@id="Form1"]/table[2]/tbody/input');
+      }
 
       await browser.close();
     } catch (error) {

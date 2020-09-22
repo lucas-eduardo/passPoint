@@ -12,6 +12,7 @@ class StartBot {
     'marcacao do ponto',
     'marcar ponto',
     'marcar',
+    'passar almoco e lembrar volta',
   ];
 
   private dictionaryRegister = [
